@@ -6,10 +6,9 @@ function App() {
   return (
     <Canvas
       camera={{
-        fov: 45,
+        fov: 100,
         near: 0.1,
         far: 200,
-        position: [-4, 3, 6],
       }}
     >
       <OrbitControls />
