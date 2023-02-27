@@ -1,5 +1,5 @@
-import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import { Perf } from "r3f-perf";
 import { Scene } from "./Scene";
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
         // position: [15, 5, 5],
       }}
     >
-      <OrbitControls />
+      <Perf />
       <Scene />
     </Canvas>
   );
