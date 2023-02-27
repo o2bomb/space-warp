@@ -5,7 +5,7 @@ import * as THREE from "three";
 export interface SceneProps {}
 
 const COUNT = 500;
-const XY_BOUNDS = 20;
+const XY_BOUNDS = 30;
 const Z_BOUNDS = 20;
 const MAX_SPEED_FACTOR = 20;
 
