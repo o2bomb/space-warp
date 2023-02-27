@@ -1,7 +1,6 @@
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { Object3D, Vector3 } from "three";
 
 export interface SceneProps {}
 
@@ -24,7 +23,7 @@ export const Scene = ({}: SceneProps) => {
   useEffect(() => {
     if (!ref.current) return;
 
-    const t = new Object3D();
+    const t = new THREE.Object3D();
     let j = 0;
     for (let i = 0; i < COUNT * 3; i += 3) {
       t.position.x = positions[i];
@@ -36,9 +35,11 @@ export const Scene = ({}: SceneProps) => {
   }, []);
 
   const temp = new THREE.Matrix4();
-  const tempPos = new Vector3();
-  const tempScale = new Vector3();
-  const tempObject = new Object3D();
+  const tempPos = new THREE.Vector3();
+  const tempObject = new THREE.Object3D();
+  const tempColor = new THREE.Color();
+  const initColor = new THREE.Color(0xfff);
+  const fadeColor = new THREE.Color(0x000);
   useFrame((state, delta) => {
     if (!ref.current) return;
 
@@ -49,7 +50,7 @@ export const Scene = ({}: SceneProps) => {
       tempObject.scale.set(
         1,
         1,
-        clamp(1, Math.pow(0.5, state.clock.elapsedTime) * 10, 10)
+        clamp(1, Math.pow(0.5, state.clock.elapsedTime) * 20, 20)
       );
 
       // update position
@@ -65,10 +66,20 @@ export const Scene = ({}: SceneProps) => {
       }
       tempObject.position.set(tempPos.x, tempPos.y, tempPos.z);
 
+      // apply transforms
       tempObject.updateMatrix();
       ref.current.setMatrixAt(i, tempObject.matrix);
+
+      // update and apply color
+      if (tempPos.z > 0) {
+        tempColor.r = tempColor.g = tempColor.b = 1;
+      } else {
+        tempColor.r = tempColor.g = tempColor.b = 1 - tempPos.z / -10;
+      }
+      ref.current.setColorAt(i, tempColor);
     }
     ref.current.instanceMatrix.needsUpdate = true;
+    if (ref.current.instanceColor) ref.current.instanceColor.needsUpdate = true;
   });
 
   return (
@@ -78,7 +89,7 @@ export const Scene = ({}: SceneProps) => {
       matrixAutoUpdate
     >
       <sphereGeometry args={[0.05]} />
-      <meshNormalMaterial />
+      <meshBasicMaterial color="white" />
     </instancedMesh>
   );
 };
