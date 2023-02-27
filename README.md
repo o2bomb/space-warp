@@ -296,6 +296,10 @@ Lets warp the stars. This can be achieved easily by animated each object's scale
   });
 ```
 
+By stretching the stars out to a comical degree, we can create the illusion that they are travelling incredibly fast.
+
+https://user-images.githubusercontent.com/41817193/221559835-b7a56574-12fd-41a6-b92b-f5405b65a6c0.mp4
+
 
 ## Fading stars out
 
