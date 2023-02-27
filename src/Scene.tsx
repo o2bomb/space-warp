@@ -5,6 +5,9 @@ import * as THREE from "three";
 export interface SceneProps {}
 
 const COUNT = 500;
+const XY_BOUNDS = 20;
+const Z_BOUNDS = 20;
+const MAX_SPEED_FACTOR = 20;
 
 export const Scene = ({}: SceneProps) => {
   const ref = useRef<THREE.InstancedMesh>();
@@ -14,7 +17,7 @@ export const Scene = ({}: SceneProps) => {
     for (let i = 0; i < COUNT * 3; i += 3) {
       p[i] = generatePos();
       p[i + 1] = generatePos();
-      p[i + 2] = (Math.random() - 0.5) * 20;
+      p[i + 2] = (Math.random() - 0.5) * Z_BOUNDS;
     }
 
     return p;
@@ -48,18 +51,22 @@ export const Scene = ({}: SceneProps) => {
       tempObject.scale.set(
         1,
         1,
-        clamp(1, Math.pow(0.5, state.clock.elapsedTime) * 20, 20)
+        clamp(
+          1,
+          Math.pow(0.5, state.clock.elapsedTime) * MAX_SPEED_FACTOR,
+          MAX_SPEED_FACTOR
+        )
       );
 
       // update position
       tempPos.setFromMatrixPosition(temp);
-      if (tempPos.z < -10) {
-        tempPos.z = 10;
+      if (tempPos.z < -Z_BOUNDS / 2) {
+        tempPos.z = Z_BOUNDS / 2;
       } else {
         tempPos.z -= clamp(
           delta,
           Math.pow(0.5, state.clock.elapsedTime),
-          delta * 20
+          delta * MAX_SPEED_FACTOR
         );
       }
       tempObject.position.set(tempPos.x, tempPos.y, tempPos.z);
@@ -72,7 +79,10 @@ export const Scene = ({}: SceneProps) => {
       if (tempPos.z > 0) {
         tempColor.r = tempColor.g = tempColor.b = 1;
       } else {
-        tempColor.r = tempColor.g = tempColor.b = 1 - tempPos.z / -10;
+        tempColor.r =
+          tempColor.g =
+          tempColor.b =
+            1 - tempPos.z / (-Z_BOUNDS / 2);
       }
       ref.current.setColorAt(i, tempColor);
     }
@@ -93,7 +103,7 @@ export const Scene = ({}: SceneProps) => {
 };
 
 function generatePos() {
-  return (Math.random() - 0.5) * 20;
+  return (Math.random() - 0.5) * XY_BOUNDS;
 }
 
 function clamp(min: number, value: number, max: number) {
