@@ -590,6 +590,6 @@ I had a lot of fun writing this up, and I also learnt a lot about r3f and three.
 - Code is performant and runs well on mobile devices ✅
 - Improved readability of code ✅
 
-![image](https://user-images.githubusercontent.com/41817193/221600714-2c486730-337d-4d86-a9f6-d69a5b200579.png)
+![image](https://user-images.githubusercontent.com/41817193/221606441-d57dac50-1c73-46ea-923f-3c17f68b5a49.png)
 
-And if anyone else learns from this too then that's awesome 
+And if anyone else learns from this too then that's awesome 🥳!
