@@ -38,8 +38,6 @@ export const Scene = ({}: SceneProps) => {
   const tempPos = new THREE.Vector3();
   const tempObject = new THREE.Object3D();
   const tempColor = new THREE.Color();
-  const initColor = new THREE.Color(0xfff);
-  const fadeColor = new THREE.Color(0x000);
   useFrame((state, delta) => {
     if (!ref.current) return;
 
