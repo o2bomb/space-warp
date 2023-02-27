@@ -9,6 +9,7 @@ function App() {
         fov: 100,
         near: 0.1,
         far: 200,
+        // position: [15, 5, 5],
       }}
     >
       <OrbitControls />

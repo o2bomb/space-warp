@@ -37,12 +37,22 @@ export const Scene = ({}: SceneProps) => {
 
   const temp = new THREE.Matrix4();
   const tempPos = new Vector3();
+  const tempScale = new Vector3();
+  const tempObject = new Object3D();
   useFrame((state, delta) => {
     if (!ref.current) return;
 
     for (let i = 0; i < COUNT; i++) {
       ref.current.getMatrixAt(i, temp);
 
+      // update scale
+      tempObject.scale.set(
+        1,
+        1,
+        clamp(1, Math.pow(0.5, state.clock.elapsedTime) * 10, 10)
+      );
+
+      // update position
       tempPos.setFromMatrixPosition(temp);
       if (tempPos.z < -10) {
         tempPos.z = 10;
@@ -53,9 +63,10 @@ export const Scene = ({}: SceneProps) => {
           delta * 20
         );
       }
-      temp.setPosition(tempPos);
+      tempObject.position.set(tempPos.x, tempPos.y, tempPos.z);
 
-      ref.current.setMatrixAt(i, temp);
+      tempObject.updateMatrix();
+      ref.current.setMatrixAt(i, tempObject.matrix);
     }
     ref.current.instanceMatrix.needsUpdate = true;
   });
