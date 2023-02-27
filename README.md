@@ -5,7 +5,7 @@ In 2021, I created this space warp effect in 3D using [react-three-fiber](https:
 
 The result looks cool and all, but there were a number of problems with my implementation of this effect:
 - It was not performant on certain platforms, mobile devices espcecially. If I recall correctly, Google's Lighthouse reported a disappointing score of ~65% for performance. Not good.
-- Some of the postprocessing effects (bloom, chromatic abberation) were poorly chained together, resulting in a noticeable pop-in when the space warp ended
+- Some of the postprocessing effects (bloom, chromatic aberration) were poorly chained together, resulting in a noticeable pop-in when the space warp ended
 - It uses React's setState() in the animation loop, which is a big no-no
 
 Overall, my implementation was poor. A partial snippet of my old implementation of this effect can be found here: https://github.com/o2bomb/reworked-stars/commit/3ae2021c503b1429c266b8a3bd5d9263f6aa8aa5
@@ -355,4 +355,229 @@ Sideview:
 https://user-images.githubusercontent.com/41817193/221557393-0636273b-859e-4dbf-90f5-57a6a159c975.mp4
 
 
-# Postprocessing
+## Post processing effects
+
+It's time to add some flare to the space warp. We'll first have to install the `postprocessing` and `@react-three/postprocessing` npm packages. Then, we can add a `<EffectComposer />` to the scene in order to chain our post processing effects.
+
+### Bloom
+
+Let's start by adding bloom to the scene by adding a `<Bloom />` component within the `<EffectComposer />`. Note how we disable tone mapping on the material of the instanced mesh by passing `false` to the `toneMapped` prop. This allows us to specify an emissive colour value to the material, which is required for the bloom effect to work.
+
+> An emissive colour value in three.js is a colour value that is greater than 1.
+
+To make objects even brighter under the bloom effect, we can set the `mipmapBlur` prop to true on the `<Bloom />` component.
+
+
+```diff
+// Scene.tsx
++ import {
++   Bloom,
++   EffectComposer,
++ } from "@react-three/postprocessing";
+
+export const Scene = ({}: SceneProps) => {
+  ...
+  return (
+    <>
+      <color args={["#000000"]} attach="background" />
+      <instancedMesh
+        ref={meshRef as any}
+        args={[undefined, undefined, COUNT]}
+        matrixAutoUpdate
+      >
+        <sphereGeometry args={[0.05]} />
+-        <meshBasicMaterial color="white" />
++        <meshBasicMaterial color={[1.5, 1.5, 1.5]} toneMapped={false} />
+      </instancedMesh>
++      <EffectComposer>
++        <Bloom luminanceThreshold={0.2} mipmapBlur />
++      </EffectComposer>
+    </>
+  );
+};
+```
+
+### Chromatic aberration
+
+Chromatic aberration is an effect that creates a visual distortion in the red, green and blue colour values.
+
+![image](https://upload.wikimedia.org/wikipedia/commons/c/c5/Chromatic_aberration_%28comparison%29_-_enlargement.jpg)
+
+Let's add this effect to the scene, when the stars are being warped in. We can use the `<ChromaticAberration />` component for this. We can specify the strength of this effect by setting the `offset` prop, which takes a `THREE.Vector2` object as a value.
+
+```diff
+// Scene.tsx
+ import {
+   Bloom,
++   ChromaticAberration,
+   EffectComposer,
+ } from "@react-three/postprocessing";
++ import { BlendFunction, ChromaticAberrationEffect } from "postprocessing";
+
++ const CHROMATIC_ABBERATION_OFFSET = 0.007;
+
+export const Scene = ({}: SceneProps) => {
+  ...
+  return (
+    <>
+      <color args={["#000000"]} attach="background" />
+      <instancedMesh
+        ref={meshRef as any}
+        args={[undefined, undefined, COUNT]}
+        matrixAutoUpdate
+      >
+        <sphereGeometry args={[0.05]} />
+        <meshBasicMaterial color={[1.5, 1.5, 1.5]} toneMapped={false} />
+      </instancedMesh>
+      <EffectComposer>
+        <Bloom luminanceThreshold={0.2} mipmapBlur />
++        <ChromaticAberration
++          blendFunction={BlendFunction.NORMAL} // blend mode
++          offset={
++            new THREE.Vector2(
++              CHROMATIC_ABBERATION_OFFSET,
++              CHROMATIC_ABBERATION_OFFSET
++            )
++          }
++        />
+      </EffectComposer>
+    </>
+  );
+};
+```
+
+https://user-images.githubusercontent.com/41817193/221581926-dca7a2fc-5ff5-4a14-a7a5-bb2492de71f8.mp4
+
+Great, now it looks really cool when stars are warping in. But we should probably tone down the effect as the stars start to slow down. The best way to do this is by modifying the offset value directly in the `useFrame()` hook.
+
+First, we use React's `useRef()` hook to point to our `<ChromaticAberration />` effect.
+
+```diff
+// Scene.tsx
+...
+export const Scene = ({}: SceneProps) => {
++  const effectsRef = useRef<ChromaticAberrationEffect>();
+...
+  return (
+    <>
+      <color args={["#000000"]} attach="background" />
+      <instancedMesh
+        ref={meshRef as any}
+        args={[undefined, undefined, COUNT]}
+        matrixAutoUpdate
+      >
+        <sphereGeometry args={[0.05]} />
+        <meshBasicMaterial color={[1.5, 1.5, 1.5]} toneMapped={false} />
+      </instancedMesh>
+      <EffectComposer>
+        <Bloom luminanceThreshold={0.2} mipmapBlur />
+        <ChromaticAberration
++          ref={effectsRef as any}
+          blendFunction={BlendFunction.NORMAL} // blend mode
+          offset={
+            new THREE.Vector2(
+              CHROMATIC_ABBERATION_OFFSET,
+              CHROMATIC_ABBERATION_OFFSET
+            )
+          }
+        />
+      </EffectComposer>
+    </>
+  );
+```
+
+Then, we can modify the `offset` value, which is a Vector2 type.
+> This value is called a uniform value, which can be used as a parameter to tweak the behaviour of the underlying shader. Learn more about it [here](#how-to-access-effect-uniforms).
+
+```diff
+// Scene.tsx
+  ...
+  useFrame((state, delta) => {
+    ...
++    // update post processing uniforms
++    if (!effectsRef.current) return;
++    effectsRef.current.offset.x = Math.max(0, Math.pow(0.5, state.clock.elapsedTime) * CHROMATIC_ABBERATION_OFFSET);
++    effectsRef.current.offset.y = Math.max(0, Math.pow(0.5, state.clock.elapsedTime) * CHROMATIC_ABBERATION_OFFSET);
+  });
+
+  ...
+```
+
+And now, the chromatic aberration effect will slowly fade out as the stars slow down. Perfect.
+
+https://user-images.githubusercontent.com/41817193/221586278-32b4c2bd-a754-4dc1-933a-dca341932c0d.mp4
+
+
+### How to access effect uniforms
+
+In the previous section, we directly modified the `offset` uniform value in the chromatic aberration effect in order to make it disappear as the stars slowed down.
+
+Underneath the hood, the chromatic aberration effect is actually composed of a [fragment shader](https://thebookofshaders.com/01/) and [vertex shader](https://www.khronos.org/opengl/wiki/Vertex_Shader). Shaders are lightweight programs that are run on the system's GPU. They determine how pixels are displayed on our computer screens.
+
+Uniform values are commonly used in shaders to tweak the shader's behaviour. It is not uncommon to modify uniform values during the runtime of the program in order to change the look of the scene/objects.
+
+Let's log the ref that is pointing to the `<ChromaticAberration />` component to the browser console.
+
+![image](https://user-images.githubusercontent.com/41817193/221589747-35d6abcb-465c-4866-9e34-78aeceee6f75.png)
+
+There are a couple of ways to find out what uniforms exist in this effect. 
+
+The first way is inspecting the `uniforms` property. By expanding this field in our browser devtools, we can tell that `offset` and `modulationOffset` exist as uniforms. If we expand the `offset` property, we can see that it contains an x and y value, indicating that it is of type Vector2
+
+![image](https://user-images.githubusercontent.com/41817193/221591037-84619daf-281b-446d-b002-f97d71d52c32.png)
+
+Another way is by inspecting the fragment shader and vertex shader code.
+
+![image](https://user-images.githubusercontent.com/41817193/221592909-d07eee0c-9fb6-4bdd-9ce7-fe657e524ec3.png)
+
+Here is the fragment shader code, formatted. We can quickly tell from the `uniform float modulationOffset;` statement that `modulationOffset` is a uniform that we can modify.
+
+```glsl
+#ifdef RADIAL_MODULATION
+uniform float modulationOffset; // <--- This is the important part
+#endif
+varying float vActive;
+varying vec2 vUvR;
+varying vec2 vUvB;
+
+void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
+  vec2 ra = inputColor.ra;
+  vec2 ba = inputColor.ba;
+  #ifdef RADIAL_MODULATION
+  const vec2 center = vec2(0.5);
+  float d = distance(uv, center) * 2.0;
+  d = max(d - modulationOffset, 0.0);
+  if (vActive > 0.0 && d > 0.0) {
+    ra = texture2D(inputBuffer, mix(uv, vUvR, d)).ra;
+    ba = texture2D(inputBuffer, mix(uv, vUvB, d)).ba;
+  }
+  #else
+  if(vActive > 0.0) {
+    ra = texture2D(inputBuffer, vUvR).ra;
+    ba = texture2D(inputBuffer, vUvB).ba;
+  }
+  #endif
+  outputColor = vec4(ra.x, inputColor.g, ba.x, max(max(ra.y, ba.y), inputColor.a));
+}
+```
+
+And with the vertex shader, we can tell that `offset` is also a uniform that we can modify.
+
+```glsl
+uniform vec2 offset; // <-- This is the important part
+varying float vActive;
+varying vec2 vUvR;
+varying vec2 vUvB;
+void mainSupport(const in vec2 uv) {
+  vec2 shift = offset * vec2(1.0, aspect);
+  vActive = (shift.x != 0.0 || shift.y != 0.0) ? 1.0 : 0.0;
+  vUvR = uv + shift;
+  vUvB = uv - shift;
+}
+```
+
+Now let's inspect the logged object again. Notice how we can actually access and modify these uniform values directly, via the prototype fields. Very useful.
+
+![image](https://user-images.githubusercontent.com/41817193/221594799-05e7cbbb-b166-4ce8-9701-4114c060c3e9.png)
+
+
