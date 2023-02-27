@@ -211,7 +211,7 @@ The space warp animation can be broken down into 2 distinct phases:
 
 When an object "slows down", we call this deceleration. We can mimic this deceleration mathematically by using a decreasing exponential function, otherwise known as exponential decay.
 
-![image](https://user-images.githubusercontent.com/41817193/221538227-ec2720b9-6090-4cd6-9bd2-1f02b280bc69.png)
+[![image](https://user-images.githubusercontent.com/41817193/221538227-ec2720b9-6090-4cd6-9bd2-1f02b280bc69.png)]
 
 The graph above is defined by the function:
 
