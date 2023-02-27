@@ -15,7 +15,7 @@ export const Scene = ({}: SceneProps) => {
     for (let i = 0; i < COUNT * 3; i += 3) {
       p[i] = generatePos();
       p[i + 1] = generatePos();
-      p[i + 2] = (Math.random() - 0.5) * 10;
+      p[i + 2] = (Math.random() - 0.5) * 20;
     }
 
     return p;
@@ -44,10 +44,14 @@ export const Scene = ({}: SceneProps) => {
       ref.current.getMatrixAt(i, temp);
 
       tempPos.setFromMatrixPosition(temp);
-      if (tempPos.z < -5) {
-        tempPos.z = 0;
+      if (tempPos.z < -10) {
+        tempPos.z = 10;
       } else {
-        tempPos.z -= delta;
+        tempPos.z -= clamp(
+          delta,
+          Math.pow(0.5, state.clock.elapsedTime),
+          delta * 20
+        );
       }
       temp.setPosition(tempPos);
 
@@ -62,13 +66,16 @@ export const Scene = ({}: SceneProps) => {
       args={[undefined, undefined, COUNT]}
       matrixAutoUpdate
     >
-      {/* <sphereGeometry args={[0.1]} /> */}
-      <boxGeometry args={[0.1, 0.1, 0.1]} />
+      <sphereGeometry args={[0.05]} />
       <meshNormalMaterial />
     </instancedMesh>
   );
 };
 
 function generatePos() {
-  return (Math.random() - 0.5) * 10;
+  return (Math.random() - 0.5) * 20;
+}
+
+function clamp(min: number, value: number, max: number) {
+  return Math.min(max, Math.max(min, value));
 }
