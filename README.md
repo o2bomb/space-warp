@@ -397,6 +397,9 @@ export const Scene = ({}: SceneProps) => {
 };
 ```
 
+![image](https://user-images.githubusercontent.com/41817193/221596197-a93cc83a-32d8-4afc-87ec-0fbed942deda.png)
+
+
 ### Chromatic aberration
 
 Chromatic aberration is an effect that creates a visual distortion in the red, green and blue colour values.
