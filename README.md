@@ -8,7 +8,7 @@ The result looks cool and all, but there were a number of problems with my imple
 - Some of the postprocessing effects (bloom, chromatic aberration) were poorly chained together, resulting in a noticeable pop-in when the space warp ended
 - It uses React's setState() in the animation loop, which is a big no-no
 
-Overall, my implementation was poor. A partial snippet of my old implementation of this effect can be found here: https://github.com/o2bomb/reworked-stars/commit/3ae2021c503b1429c266b8a3bd5d9263f6aa8aa5
+Overall, my implementation was poor. A partial snippet of my old implementation of this effect can be found here (it was quite terrible): https://github.com/o2bomb/reworked-stars/commit/3ae2021c503b1429c266b8a3bd5d9263f6aa8aa5
 
 My goal in this project is to recreate the "space warp" effect, fix my previous errors and improve both performance and code-readability in my implementation. I will also outline all of the main steps in creating this effect, with diagrams that illustrate these steps. Some basic knowledge of high-scool level mathematics is not required but recommended.
 
@@ -583,4 +583,13 @@ Now let's inspect the logged object again. Notice how we can actually access and
 
 ![image](https://user-images.githubusercontent.com/41817193/221594799-05e7cbbb-b166-4ce8-9701-4114c060c3e9.png)
 
+## Conclusion
 
+I had a lot of fun writing this up, and I also learnt a lot about r3f and three.js while doing so. In the end, I achieved my all of my goals for this project:
+- Avoided errors in previous implementation ✅
+- Code is performant and runs well on mobile devices ✅
+- Improved readability of code ✅
+
+![image](https://user-images.githubusercontent.com/41817193/221600714-2c486730-337d-4d86-a9f6-d69a5b200579.png)
+
+And if anyone else learns from this too then that's awesome 
