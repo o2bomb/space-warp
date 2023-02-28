@@ -12,6 +12,15 @@ Overall, my implementation was poor. A partial snippet of my old implementation 
 
 My goal in this project is to recreate the "space warp" effect, fix my previous errors and improve both performance and code-readability in my implementation. I will also outline all of the main steps in creating this effect, with diagrams that illustrate these steps. Some basic knowledge of high-scool level mathematics is not required but recommended.
 
+
+## Final result
+
+A live demo of the final result can be found at https://space-warp.felixtan.me/.
+
+
+https://user-images.githubusercontent.com/41817193/221771300-308e263e-c4d6-4cc3-9b12-d107de6592a5.mp4
+
+
 ## Initialising the scene
 Constructing a basic scene in r3f is simple enough. We can use a `<Canvas />` element to initialise the canvas and construct the scene. Then, we can put whatever we want in the `<Canvas />` to render 3D objects in the scene.
 
