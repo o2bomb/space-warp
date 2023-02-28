@@ -150,10 +150,10 @@ export const Scene = ({}: SceneProps) => {
       ref.current.getMatrixAt(i, temp);
 
       tempPos.setFromMatrixPosition(temp);
-      if (tempPos.z < -5) {
-        tempPos.z = 0;
+      if (tempPos.z > 5) {
+        tempPos.z = -5;
       } else {
-        tempPos.z -= delta;
+        tempPos.z += delta;
       }
       temp.setPosition(tempPos);
 
@@ -185,12 +185,12 @@ export const Scene = ({}: SceneProps) => {
       ref.current.getMatrixAt(i, temp);
 
       tempPos.setFromMatrixPosition(temp);
--      if (tempPos.z < -5) {
-+      if (tempPos.z < -10) {
--        tempPos.z = 0;
-+        tempPos.z = 10;
+-      if (tempPos.z > 5) {
++      if (tempPos.z > 10) {
+-        tempPos.z = -5;
++        tempPos.z = -10;
       } else {
-        tempPos.z -= delta;
+        tempPos.z += delta;
       }
       temp.setPosition(tempPos);
 
@@ -240,10 +240,10 @@ As $\ x$ grows bigger, the output tends towards 0. When $\ x$ decreases, the out
       ref.current.getMatrixAt(i, temp);
 
       tempPos.setFromMatrixPosition(temp);
-      if (tempPos.z < -10) {
-        tempPos.z = 10;
+      if (tempPos.z > 10) {
+        tempPos.z = -10;
       } else {
-        tempPos.z -= Math.max(delta, Math.pow(0.5, state.clock.elapsedTime));
+        tempPos.z += Math.max(delta, Math.pow(0.5, state.clock.elapsedTime));
       }
       temp.setPosition(tempPos);
 
@@ -284,14 +284,10 @@ Lets warp the stars. This can be achieved easily by animated each object's scale
 
       // update position
       tempPos.setFromMatrixPosition(temp);
-      if (tempPos.z < -10) {
-        tempPos.z = 10;
+      if (tempPos.z > 10) {
+        tempPos.z = -10;
       } else {
-        tempPos.z -= clamp(
-          delta,
-          Math.pow(0.5, state.clock.elapsedTime),
-          delta * 20
-        );
+        tempPos.z += Math.max(delta, Math.pow(0.5, state.clock.elapsedTime));
       }
 -      temp.setPosition(tempPos);
 +      tempObject.position.set(tempPos.x, tempPos.y, tempPos.z);
