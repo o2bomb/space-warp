@@ -25,10 +25,9 @@ function App() {
   return (
     <Canvas
       camera={{
-        fov: 45,
+        fov: 100,
         near: 0.1,
-        far: 200,
-        position: [-4, 3, 6],
+        far: 200
       }}
     >
       <OrbitControls />
@@ -319,9 +318,9 @@ First, lets replace the `<meshNormalMaterial />` with a `<meshBasicMaterial />` 
       args={[undefined, undefined, COUNT]}
       matrixAutoUpdate
     >
+      <sphereGeometry args={[0.05]} />
 -      <meshNormalMaterial />
-+      <sphereGeometry args={[0.05]} />
-      <meshBasicMaterial color="white" />
++      <meshBasicMaterial color="white" />
     </instancedMesh>
   );
 ```
