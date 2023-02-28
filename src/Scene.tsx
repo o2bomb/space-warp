@@ -11,10 +11,10 @@ import * as THREE from "three";
 export interface SceneProps {}
 
 const COUNT = 500;
-const XY_BOUNDS = 30;
+const XY_BOUNDS = 40;
 const Z_BOUNDS = 20;
 const MAX_SPEED_FACTOR = 1;
-const MAX_SCALE_FACTOR = 40;
+const MAX_SCALE_FACTOR = 50;
 
 const CHROMATIC_ABBERATION_OFFSET = 0.007;
 
@@ -55,10 +55,10 @@ export const Scene = ({}: SceneProps) => {
 
       // update position
       tempPos.setFromMatrixPosition(temp);
-      if (tempPos.z < -Z_BOUNDS / 2) {
-        tempPos.z = Z_BOUNDS / 2;
+      if (tempPos.z > Z_BOUNDS / 2) {
+        tempPos.z = -Z_BOUNDS / 2;
       } else {
-        tempPos.z -= Math.max(
+        tempPos.z += Math.max(
           delta,
           Math.pow(0.5, state.clock.elapsedTime) * MAX_SPEED_FACTOR
         );
