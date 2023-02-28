@@ -17,8 +17,7 @@ My goal in this project is to recreate the "space warp" effect, fix my previous 
 
 A live demo of the final result can be found at https://space-warp.felixtan.me/.
 
-
-https://user-images.githubusercontent.com/41817193/221771300-308e263e-c4d6-4cc3-9b12-d107de6592a5.mp4
+https://user-images.githubusercontent.com/41817193/221775662-1b66c59f-c403-4a65-823e-4dc0ba45a872.mp4
 
 
 ## Initialising the scene
@@ -96,6 +95,7 @@ After doing all this, we get something like this showing up on the screen. These
 
 ![image](https://user-images.githubusercontent.com/41817193/221528743-a360e7ba-fdee-47c2-a524-348730cad606.png)
 
+
 ## Animating each object
 
 In order to animate our instanced objects, we need to modify their positions individually, which is stored within the instanced mesh's matrix data. First, lets change how each object's position is initialised.
@@ -167,6 +167,7 @@ export const Scene = ({}: SceneProps) => {
 Now we get this:
 
 https://user-images.githubusercontent.com/41817193/221534451-b7ccd3a5-60f1-4cae-8e39-395cd53e14d4.mp4
+
 
 ## Deccelerating objects
 
@@ -258,6 +259,7 @@ An important thing to consider when using exponential decay is that the output w
 And here is the result. Note how the stars decelerate to a minimum velocity, and stays at that velocity.
 
 https://user-images.githubusercontent.com/41817193/221540975-0cb008e5-5a08-4af4-bfcb-3e451b257402.mp4
+
 
 ## Warping the stars
 
@@ -362,6 +364,7 @@ https://user-images.githubusercontent.com/41817193/221557393-0636273b-859e-4dbf-
 ## Post processing effects
 
 It's time to add some flare to the space warp. We'll first have to install the `postprocessing` and `@react-three/postprocessing` npm packages. Then, we can add a `<EffectComposer />` to the scene in order to chain our post processing effects.
+
 
 ### Bloom
 
@@ -586,6 +589,7 @@ void mainSupport(const in vec2 uv) {
 Now let's inspect the logged object again. Notice how we can actually access and modify these uniform values directly, via the prototype fields. Very useful.
 
 ![image](https://user-images.githubusercontent.com/41817193/221594799-05e7cbbb-b166-4ce8-9701-4114c060c3e9.png)
+
 
 ## Conclusion
 
