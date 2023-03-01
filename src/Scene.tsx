@@ -13,7 +13,7 @@ export interface SceneProps {}
 const COUNT = 500;
 const XY_BOUNDS = 40;
 const Z_BOUNDS = 20;
-const MAX_SPEED_FACTOR = 1;
+const MAX_SPEED_FACTOR = 2;
 const MAX_SCALE_FACTOR = 50;
 
 const CHROMATIC_ABBERATION_OFFSET = 0.007;
@@ -43,25 +43,21 @@ export const Scene = ({}: SceneProps) => {
   useFrame((state, delta) => {
     if (!meshRef.current) return;
 
+    // https://www.wolframalpha.com/input?i=1%2F%28x%5Ex%29
+    const velocity =
+      1 / Math.pow(state.clock.elapsedTime + 1, state.clock.elapsedTime + 1);
     for (let i = 0; i < COUNT; i++) {
       meshRef.current.getMatrixAt(i, temp);
 
       // update scale
-      tempObject.scale.set(
-        1,
-        1,
-        Math.max(1, Math.pow(0.5, state.clock.elapsedTime) * MAX_SCALE_FACTOR)
-      );
+      tempObject.scale.set(1, 1, Math.max(1, velocity * MAX_SCALE_FACTOR));
 
       // update position
       tempPos.setFromMatrixPosition(temp);
       if (tempPos.z > Z_BOUNDS / 2) {
         tempPos.z = -Z_BOUNDS / 2;
       } else {
-        tempPos.z += Math.max(
-          delta,
-          Math.pow(0.5, state.clock.elapsedTime) * MAX_SPEED_FACTOR
-        );
+        tempPos.z += Math.max(delta, velocity * MAX_SPEED_FACTOR);
       }
       tempObject.position.set(tempPos.x, tempPos.y, tempPos.z);
 
