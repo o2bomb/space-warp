@@ -15,7 +15,7 @@ My goal in this project is to recreate the "space warp" effect, fix my previous 
 
 ## Final result
 
-A live demo of the final result can be found at https://space-warp.felixtan.me/.
+A live demo of the final result can be found at https://space-warp.o2b.dev/.
 
 https://user-images.githubusercontent.com/41817193/221775662-1b66c59f-c403-4a65-823e-4dc0ba45a872.mp4
 
